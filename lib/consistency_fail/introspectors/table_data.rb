@@ -18,6 +18,15 @@ module ConsistencyFail
         end
         result
       end
+
+      def null_constraints(model)
+        return [] if !model.table_exists?        
+
+        not_table_columns = model.connection.columns(model.table_name).select{ |c| !c.null }
+        not_table_columns.each do |column|
+          column
+        end
+      end
     end
   end
 end

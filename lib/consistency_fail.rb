@@ -3,7 +3,9 @@ require 'consistency_fail/introspectors/table_data'
 require 'consistency_fail/introspectors/validates_uniqueness_of'
 require 'consistency_fail/introspectors/has_one'
 require 'consistency_fail/introspectors/polymorphic'
+require 'consistency_fail/introspectors/validates_presence_of'
 require 'consistency_fail/reporter'
+require 'railtie' if defined?(Rails)
 
 module ConsistencyFail
   def self.run
@@ -27,6 +29,11 @@ module ConsistencyFail
     introspector = ConsistencyFail::Introspectors::Polymorphic.new
     problems = problems(models.all, introspector)
     reporter.report_polymorphic_problems(problems)
+    success &&= problems.empty?
+
+    introspector = ConsistencyFail::Introspectors::ValidatesPresenceOf.new
+    problems = problems(models.all, introspector)
+    reporter.report_validates_presence_of_problems(problems)
     success &&= problems.empty?
     
     success
